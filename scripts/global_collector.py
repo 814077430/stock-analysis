@@ -8,6 +8,13 @@
 import sys
 import json
 import requests
+
+# Windows 控制台编码处理
+if sys.platform == 'win32':
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except:
+        pass
 from datetime import datetime
 from pathlib import Path
 from typing import List, Dict, Optional
@@ -80,34 +87,43 @@ def get_hk_quote(stock_code: str) -> Optional[Dict]:
     if not YFINANCE_AVAILABLE:
         return None
     
-    try:
-        # 港股代码格式：0700.HK
-        if not stock_code.endswith('.HK'):
-            code = f"{stock_code}.HK"
-        else:
-            code = stock_code
-        
-        ticker = yf.Ticker(code)
-        info = ticker.fast_info
-        
-        return {
-            'code': stock_code,
-            'name': info.get('symbol', stock_code),
-            'market': '港股',
-            'price': info.get('last_price', 0),
-            'open': info.get('open', 0),
-            'high': info.get('day_high', 0),
-            'low': info.get('day_low', 0),
-            'close': info.get('previous_close', 0),
-            'change': info.get('last_price', 0) - info.get('previous_close', 0),
-            'change_pct': ((info.get('last_price', 0) - info.get('previous_close', 0)) / info.get('previous_close', 1)) * 100 if info.get('previous_close') else 0,
-            'volume': info.get('last_volume', 0),
-            'market_value': info.get('market_cap', 0),
-            'pe_ratio': info.get('trailing_pe', 0)
-        }
-    except Exception as e:
-        print(f"❌ 获取港股行情失败 {stock_code}: {e}")
-        return None
+    import time
+    # 重试机制
+    for attempt in range(3):
+        try:
+            time.sleep(1 * attempt)  # 重试前等待
+            
+            # 港股代码格式：0700.HK
+            if not stock_code.endswith('.HK'):
+                code = f"{stock_code.zfill(4)}.HK"
+            else:
+                code = stock_code
+            
+            ticker = yf.Ticker(code)
+            info = ticker.fast_info
+            
+            return {
+                'code': stock_code,
+                'name': info.get('symbol', stock_code),
+                'market': '港股',
+                'price': info.get('last_price', 0),
+                'open': info.get('open', 0),
+                'high': info.get('day_high', 0),
+                'low': info.get('day_low', 0),
+                'close': info.get('previous_close', 0),
+                'change': info.get('last_price', 0) - info.get('previous_close', 0),
+                'change_pct': ((info.get('last_price', 0) - info.get('previous_close', 0)) / info.get('previous_close', 1)) * 100 if info.get('previous_close') else 0,
+                'volume': info.get('last_volume', 0),
+                'market_value': info.get('market_cap', 0),
+                'pe_ratio': info.get('trailing_pe', 0)
+            }
+        except Exception as e:
+            if attempt == 2:
+                print(f"❌ 获取港股行情失败 {stock_code}: {e}")
+                return None
+            time.sleep(2)
+    
+    return None
 
 
 def get_us_quote(stock_code: str) -> Optional[Dict]:
@@ -115,29 +131,38 @@ def get_us_quote(stock_code: str) -> Optional[Dict]:
     if not YFINANCE_AVAILABLE:
         return None
     
-    try:
-        # 美股代码格式：AAPL
-        ticker = yf.Ticker(stock_code)
-        info = ticker.fast_info
-        
-        return {
-            'code': stock_code,
-            'name': info.get('symbol', stock_code),
-            'market': '美股',
-            'price': info.get('last_price', 0),
-            'open': info.get('open', 0),
-            'high': info.get('day_high', 0),
-            'low': info.get('day_low', 0),
-            'close': info.get('previous_close', 0),
-            'change': info.get('last_price', 0) - info.get('previous_close', 0),
-            'change_pct': ((info.get('last_price', 0) - info.get('previous_close', 0)) / info.get('previous_close', 1)) * 100 if info.get('previous_close') else 0,
-            'volume': info.get('last_volume', 0),
-            'market_value': info.get('market_cap', 0),
-            'pe_ratio': info.get('trailing_pe', 0)
-        }
-    except Exception as e:
-        print(f"❌ 获取美股行情失败 {stock_code}: {e}")
-        return None
+    import time
+    # 重试机制
+    for attempt in range(3):
+        try:
+            time.sleep(1 * attempt)  # 重试前等待
+            
+            # 美股代码格式：AAPL
+            ticker = yf.Ticker(stock_code)
+            info = ticker.fast_info
+            
+            return {
+                'code': stock_code,
+                'name': info.get('symbol', stock_code),
+                'market': '美股',
+                'price': info.get('last_price', 0),
+                'open': info.get('open', 0),
+                'high': info.get('day_high', 0),
+                'low': info.get('day_low', 0),
+                'close': info.get('previous_close', 0),
+                'change': info.get('last_price', 0) - info.get('previous_close', 0),
+                'change_pct': ((info.get('last_price', 0) - info.get('previous_close', 0)) / info.get('previous_close', 1)) * 100 if info.get('previous_close') else 0,
+                'volume': info.get('last_volume', 0),
+                'market_value': info.get('market_cap', 0),
+                'pe_ratio': info.get('trailing_pe', 0)
+            }
+        except Exception as e:
+            if attempt == 2:
+                print(f"❌ 获取美股行情失败 {stock_code}: {e}")
+                return None
+            time.sleep(2)
+    
+    return None
 
 
 # ============ K 线数据 ============
