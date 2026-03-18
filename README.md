@@ -1,23 +1,21 @@
-# 📈 股票分析系统 v1.0
+# 🌏 全球股票分析系统 v1.0
 
-**创建时间**: 2026-03-18  
 **GitHub**: https://github.com/814077430/stock-analysis
 
 ---
 
-## 📁 目录结构
+## 📁 项目结构
 
 ```
 stock_analysis/
 ├── scripts/
-│   ├── main.py                 # 主程序 (采集 + 分析 + 报告)
-│   ├── stock_collector.py      # 数据采集
-│   ├── technical_analysis.py   # 技术分析
-│   └── report_generator.py     # 报告生成
-├── data/                       # 数据目录 (自动创建)
-├── reports/                    # 报告目录 (自动创建)
+│   ├── main.py              # 主程序
+│   ├── data_collector.py    # 数据采集 (A 股/港股/美股)
+│   ├── technical_analysis.py # 技术分析
+│   └── report_generator.py  # 报告生成
+├── data/                    # 数据目录
+├── reports/                 # 报告目录
 ├── requirements.txt
-├── run_analysis.bat
 └── README.md
 ```
 
@@ -34,51 +32,75 @@ pip install -r requirements.txt
 ### 2. 运行分析
 
 ```bash
-# Windows 双击运行
-run_analysis.bat
+# A 股
+py scripts/main.py --market CN
 
-# 或命令行
-py scripts/main.py
+# 港股
+py scripts/main.py --market HK
+
+# 美股
+py scripts/main.py --market US
 
 # 指定股票
-py scripts/main.py --watchlist 000001,600000,000519
-
-# 非交互模式 (定时任务)
-py scripts/main.py --no-prompt
-```
-
-### 3. 查看结果
-
-```bash
-# 查看报告
-ls reports/
-
-# 查看数据
-ls data/
+py scripts/main.py --watchlist 000001,600519,AAPL
 ```
 
 ---
 
-## 📊 功能特性
+## 📊 支持的市场
 
-### ✅ 数据采集
-- A 股实时行情 (腾讯 API)
-- K 线历史数据 (东方财富)
-- 全市场股票列表
-- 自选股监控
+| 市场 | 代码 | 示例 | 数据源 |
+|------|------|------|--------|
+| 🇨🇳 A 股 | CN | 000001, 600519 | 腾讯财经 |
+| 🇭🇰 港股 | HK | 00700, 9988 | yfinance |
+| 🇺🇸 美股 | US | AAPL, TSLA | yfinance |
 
-### ✅ 技术分析
-- 均线 (MA5/10/20/60)
-- MACD 金叉/死叉
-- KDJ 超买/超卖
-- RSI 强弱指标
-- 布林带突破
-- 综合评分 (0-100 分)
+---
 
-### ✅ 报告生成
-- 每日复盘报告
-- 个股分析报告
-- Markdown 格式输出
+## 🔧 核心功能
+
+### 1. 数据采集 (`data_collector.py`)
+
+**A 股**:
+- 实时行情 (腾讯 API)
+- K 线数据 (东方财富)
+
+**港股/美股**:
+- 实时行情 (yfinance)
+- K 线数据 (yfinance)
+
+**统一接口**:
+```python
+from data_collector import get_quote, get_kline
+
+# 获取行情
+quote = get_quote('000001', 'CN')
+quote = get_quote('00700', 'HK')
+quote = get_quote('AAPL', 'US')
+
+# 获取 K 线
+kline = get_kline('000001', 'CN')
+```
+
+### 2. 技术分析 (`technical_analysis.py`)
+
+**指标**:
+- MA (5/10/20/60)
+- MACD
+- KDJ
+- RSI
+- BOLL
+
+**输出**:
+- 综合评分 (0-100)
+- 操作建议
+- 交易信号
+
+### 3. 报告生成 (`report_generator.py`)
+
+**报告类型**:
+- 每日复盘
+- 个股分析
 
 ---
 
@@ -87,67 +109,74 @@ ls data/
 ```bash
 py scripts/main.py --help
 
---watchlist 000001,600000  # 自选股代码
---no-prompt                # 非交互模式
---notify                   # 启用通知
---config config.json       # 配置文件
+--watchlist 000001,AAPL  # 自选股
+--market CN/HK/US        # 市场
+--no-prompt              # 非交互模式
 ```
+
+---
+
+## ⚠️ 注意事项
+
+### 1. yfinance 限流
+- 每只股票间隔 2-3 秒
+- 避免短时间大量请求
+- 触发限流后等待 15 分钟
+
+### 2. 数据延迟
+- A 股：实时
+- 港股/美股：15 分钟延迟
+
+### 3. 网络要求
+- yfinance 需访问雅虎财经
+- 可能需要代理
 
 ---
 
 ## 📝 示例输出
 
 ```
-📊 综合评分：72/100
-💡 操作建议：🟢 建议买入
+📊 平安银行 (000001 - CN)
+============================================================
+💰 价格：10.96
+📈 涨跌幅：-0.63%
+📊 K 线：100 条
 
-📉 技术指标:
-  MA5:  19.46
-  MA10: 19.95
-  MACD: 0.06
-  KDJ:  65/60
+📊 综合评分：45/100
+💡 操作建议：🟡 观望
 
 🚨 交易信号:
-  🟢 MACD 金叉
-  📈 多头排列
+  ⚠️ 触及布林上轨 (可能回调)
 ```
 
 ---
 
-## 🌏 全球市场支持
+## 🛠️ 扩展
 
-### 港股/美股
-
-```bash
-# 安装 yfinance
-pip install yfinance
-
-# 分析全球股票
-py scripts/global_analysis.py
-
-# 查看示例代码
-py scripts/global_collector.py
+### 添加新市场
+```python
+# data_collector.py
+def get_xx_quote(code):
+    # 实现新市场数据源
+    pass
 ```
 
-**支持市场**:
-- 🇨🇳 A 股：000001, 600519
-- 🇭🇰 港股：00700 (腾讯), 9988 (阿里)
-- 🇺🇸 美股：AAPL (苹果), TSLA (特斯拉), NVDA (英伟达)
+### 添加新指标
+```python
+# technical_analysis.py
+@staticmethod
+def NEW_INDICATOR(data):
+    # 计算逻辑
+    return df
+```
 
 ---
 
 ## ⚠️ 风险提示
 
 - 技术指标仅供参考
-- 数据有 15 分钟延迟
 - 不构成投资建议
 - 股市有风险，投资需谨慎
-
----
-
-## 📄 详细文档
-
-- `PROJECT_DOCS.md` - 完整项目文档
 
 ---
 
