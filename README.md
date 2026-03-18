@@ -114,18 +114,25 @@ py scripts/main.py --help
 
 ---
 
-## 🌏 扩展支持 (可选)
+## 🌏 全球市场支持
 
 ### 港股/美股
-编辑 `GLOBAL_DATA_SUPPORT.md` 查看详细说明。
 
 ```bash
 # 安装 yfinance
 pip install yfinance
 
-# 港股：0700.HK (腾讯)
-# 美股：AAPL (苹果), TSLA (特斯拉)
+# 分析全球股票
+py scripts/global_analysis.py
+
+# 查看示例代码
+py scripts/global_collector.py
 ```
+
+**支持市场**:
+- 🇨🇳 A 股：000001, 600519
+- 🇭🇰 港股：00700 (腾讯), 9988 (阿里)
+- 🇺🇸 美股：AAPL (苹果), TSLA (特斯拉), NVDA (英伟达)
 
 ---
 
