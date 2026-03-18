@@ -85,11 +85,10 @@ git push -u origin main
 ```
 stock-analysis/
 ├── scripts/              # 核心脚本
-│   ├── main.py          # 主程序
-│   ├── stock_collector.py    # 数据采集
-│   ├── technical_analysis.py # 技术分析
-│   ├── report_generator.py   # 报告生成
-│   └── wanmei_simple.py      # 示例：完美世界分析
+│   ├── main.py                 # 主程序
+│   ├── stock_collector.py      # 数据采集
+│   ├── technical_analysis.py   # 技术分析
+│   └── report_generator.py     # 报告生成
 ├── data/                # 数据目录
 ├── reports/             # 报告目录
 ├── requirements.txt     # Python 依赖
