@@ -1,0 +1,19 @@
+# 股票分析数据
+*.csv
+*.json
+*.db
+*.sqlite
+*.parquet
+
+# 缓存
+__pycache__/
+*.pyc
+.cache/
+
+# 临时文件
+*.tmp
+*.log
+
+# 配置文件 (可能包含 API Key)
+config.local.json
+.env
