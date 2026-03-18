@@ -1,7 +1,7 @@
 # 📈 股票分析系统 v1.0
 
 **创建时间**: 2026-03-18  
-**状态**: ✅ 基础功能完成
+**GitHub**: https://github.com/814077430/stock-analysis
 
 ---
 
@@ -9,13 +9,13 @@
 
 ```
 stock_analysis/
-├── scripts/         # 核心脚本
-│   ├── main.py              # 主程序
-│   ├── stock_collector.py   # 数据采集
-│   ├── technical_analysis.py # 技术分析
-│   └── report_generator.py  # 报告生成
-├── data/          # 股票数据、历史行情
-├── reports/       # 分析报告、日报、周报
+├── scripts/
+│   ├── main.py                 # 主程序 (采集 + 分析 + 报告)
+│   ├── stock_collector.py      # 数据采集
+│   ├── technical_analysis.py   # 技术分析
+│   └── report_generator.py     # 报告生成
+├── data/                       # 数据目录 (自动创建)
+├── reports/                    # 报告目录 (自动创建)
 ├── requirements.txt
 ├── run_analysis.bat
 └── README.md
@@ -23,66 +23,31 @@ stock_analysis/
 
 ---
 
-## 🎯 功能特性
-
-### ✅ 数据采集
-- A 股行情数据抓取（腾讯 API）
-- K 线历史数据（日线/周线/月线）
-- 实时行情
-- 自选股监控
-- 数据保存（CSV/JSON）
-
-### ✅ 分析功能
-- 技术指标分析 (MA, MACD, KDJ, RSI, BOLL, ATR)
-- 交易信号识别（金叉/死叉/突破）
-- 综合评分系统（0-100 分）
-- 操作建议生成
-
-### ✅ 报告生成
-- 每日复盘报告
-- 个股分析报告
-- 周报/月报汇总
-- Markdown 格式输出
-
-### ✅ 通知功能
-- 飞书 Webhook 通知
-- 邮件通知（SMTP）
-- 配置文件支持
-
----
-
 ## 🚀 快速开始
 
-### 安装依赖
+### 1. 安装依赖
 
 ```bash
-cd stock_analysis
 pip install -r requirements.txt
 ```
 
-### 运行完整分析
+### 2. 运行分析
 
 ```bash
-# 分析默认自选股
+# Windows 双击运行
+run_analysis.bat
+
+# 或命令行
 py scripts/main.py
 
-# 分析指定股票
-py scripts/main.py --watchlist 000001,600000,000002,600519
+# 指定股票
+py scripts/main.py --watchlist 000001,600000,000519
 
-# 非交互模式（适合定时任务）
+# 非交互模式 (定时任务)
 py scripts/main.py --no-prompt
-
-# 只采集数据
-py scripts/stock_collector.py
-
-# 只技术分析
-py scripts/technical_analysis.py
-
-# 只生成报告
-py scripts/report_generator.py
 ```
 
-### 查看结果
+### 3. 查看结果
 
 ```bash
 # 查看报告
@@ -94,16 +59,26 @@ ls data/
 
 ---
 
-## 📊 数据源
+## 📊 功能特性
 
-| 类型 | 来源 | 状态 |
-|------|------|------|
-| A 股实时行情 | 腾讯财经 | ✅ |
-| A 股 K 线 | 东方财富 | ✅ |
-| 港股 | 待扩展 | ⏳ |
-| 美股 | 待扩展 | ⏳ |
-| 财报数据 | 待扩展 | ⏳ |
-| 新闻舆情 | 待扩展 | ⏳ |
+### ✅ 数据采集
+- A 股实时行情 (腾讯 API)
+- K 线历史数据 (东方财富)
+- 全市场股票列表
+- 自选股监控
+
+### ✅ 技术分析
+- 均线 (MA5/10/20/60)
+- MACD 金叉/死叉
+- KDJ 超买/超卖
+- RSI 强弱指标
+- 布林带突破
+- 综合评分 (0-100 分)
+
+### ✅ 报告生成
+- 每日复盘报告
+- 个股分析报告
+- Markdown 格式输出
 
 ---
 
@@ -112,8 +87,7 @@ ls data/
 ```bash
 py scripts/main.py --help
 
-# 参数说明:
---watchlist 000001,600000  # 自选股代码列表
+--watchlist 000001,600000  # 自选股代码
 --no-prompt                # 非交互模式
 --notify                   # 启用通知
 --config config.json       # 配置文件
@@ -121,17 +95,53 @@ py scripts/main.py --help
 
 ---
 
-## 📝 扩展计划
+## 📝 示例输出
 
-- [ ] 港股/美股数据支持
-- [ ] 财务数据抓取
-- [ ] 基本面分析（PE/PB/ROE）
-- [ ] 资金流向分析
-- [ ] 板块轮动监控
-- [ ] 可视化图表
-- [ ] Web 界面
+```
+📊 综合评分：72/100
+💡 操作建议：🟢 建议买入
+
+📉 技术指标:
+  MA5:  19.46
+  MA10: 19.95
+  MACD: 0.06
+  KDJ:  65/60
+
+🚨 交易信号:
+  🟢 MACD 金叉
+  📈 多头排列
+```
 
 ---
 
-**GitHub**: https://github.com/814077430/stock-analysis  
+## 🌏 扩展支持 (可选)
+
+### 港股/美股
+编辑 `GLOBAL_DATA_SUPPORT.md` 查看详细说明。
+
+```bash
+# 安装 yfinance
+pip install yfinance
+
+# 港股：0700.HK (腾讯)
+# 美股：AAPL (苹果), TSLA (特斯拉)
+```
+
+---
+
+## ⚠️ 风险提示
+
+- 技术指标仅供参考
+- 数据有 15 分钟延迟
+- 不构成投资建议
+- 股市有风险，投资需谨慎
+
+---
+
+## 📄 详细文档
+
+- `PROJECT_DOCS.md` - 完整项目文档
+
+---
+
 **License**: MIT
