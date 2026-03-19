@@ -17,3 +17,9 @@ __pycache__/
 # 配置文件 (可能包含 API Key)
 config.local.json
 .env
+
+# 分析报告 (不上传)
+reports/*.md
+scripts/reports/*.md
+data/*.csv
+data/*.json
